@@ -1,14 +1,9 @@
 // @flow
 
-import type { LoadObjectOperation } from './LoadObject';
-
-export type EntityID = string | number;
-
 /* Entities */
 
 export type EntityName =
   | 'accounts'
-  | 'achievements'
   | 'beverage-availabilities'
   | 'beverage-glasses'
   | 'beverage-srms'
@@ -16,8 +11,6 @@ export type EntityName =
   | 'beverages'
   | 'chart'
   | 'devices'
-  | 'flow-sensors'
-  | 'friends'
   | 'kegs'
   | 'locations'
   | 'organizations'
@@ -28,7 +21,7 @@ export type EntityName =
   | 'schedules'
   | 'taps';
 
-export type ShortenedEntity = { id: EntityID, name: string };
+export type ShortenedEntity = { id: string, name: string };
 
 export type Account = {
   accessFailedCount: ?number,
@@ -37,7 +30,7 @@ export type Account = {
   email: ?string,
   emailConfirmed: ?boolean,
   fullName: ?string,
-  id: EntityID,
+  id: string,
   lockoutEnabled: ?boolean,
   lockoutEndDateUtc: ?string,
   logins: ?Object,
@@ -55,41 +48,9 @@ export type AccountMutator = {
   userName: string,
 };
 
-export type AchievementType =
-  | 'BackOnTheBus'
-  | 'BeerAficionado'
-  | 'BeerAuthority'
-  | 'BeerBeforeNoon'
-  | 'BeerBuff'
-  | 'BeerConnoisseur'
-  | 'DrankAKeg'
-  | 'DrankFiveKegs'
-  | 'DrankTenKegs'
-  | 'Edward40Hands'
-  | 'FirstPourOfTheDay'
-  | 'HatTrick'
-  | 'KingOfTheKeg'
-  | 'LastPourOfTheKeg'
-  | 'LastPourOfTheNight'
-  | 'LightWeight'
-  | 'PowerHour'
-  | 'SevenDaysStraight'
-  | 'Welcome';
-
-export type Achievement = {|
-  achievementType: AchievementType,
-  createdDate: Date,
-  id: EntityID,
-|};
-
-export type AchievementCounter = {|
-  achievementType: AchievementType,
-  total: number,
-|};
-
 export type Availability = {
   description: ?string,
-  id: EntityID,
+  id: string,
   name: string,
 };
 
@@ -110,22 +71,22 @@ export type Coordinates = {
 
 export type Beverage = {
   abv: number,
-  availability: ?ShortenedEntity,
+  availability: ?Availability,
   beerVariationId: ?string,
   beverageType: BeverageType,
   createDate: Date,
   createdBy: {
-    id: EntityID,
+    id: string,
     userName: string,
   },
   description: ?string,
   externalId: ?string,
   foodPairings: ?string,
-  glass: ?ShortenedEntity,
+  glassware: ?Glass,
   ibu: number,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
-  isOrganic: boolean,
+  isOrganic: ?string,
   labels: {
     icon: string,
     large: string,
@@ -136,29 +97,8 @@ export type Beverage = {
   servingTemperature: ?ServingTemperature,
   servingTemperatureDisplay: ?string,
   srm: ?Srm,
-  style: ?ShortenedEntity,
+  style: ?Object,
   updateDate: Date,
-  year: ?number,
-};
-
-export type BeverageMutator = {
-  abv: ?number,
-  availableId: ?EntityID,
-  beerVariationId: ?EntityID,
-  beverageType: BeverageType,
-  description: ?string,
-  externalId: ?EntityID,
-  foodPairings: ?string,
-  glasswareId: ?EntityID,
-  ibu: ?number,
-  id: ?EntityID,
-  isOrganic: boolean,
-  name: string,
-  originalGravity: ?number,
-  servingTemperature: ?ServingTemperature,
-  servingTemperatureDisplay: ?string,
-  srmId: ?EntityID,
-  styleId: ?EntityID,
   year: ?number,
 };
 
@@ -186,18 +126,18 @@ export type PourChartDataSet = {
   key: string,
 };
 
-export type DeviceStatus = 'Active' | 'Cleaning' | 'Free' | 'Inactive';
+export type DeviceStatus = 'Active' | 'Cleaning' | 'Inactive' | 'Unlocked';
 
 export type DeviceType = 'BrewskeyBox' | 'Onsite';
 
 export type Device = {
-  createdBy: { id: EntityID, userName: string },
+  createdBy: { id: string, userName: string },
   deviceStatus: DeviceStatus,
   deviceType: DeviceType,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   lastEdited: Date,
-  lastEditedBy: { id: EntityID, userName: string },
+  lastEditedBy: { id: string, userName: string },
   location?: ShortenedEntity,
   name: string,
   organization: ShortenedEntity,
@@ -207,70 +147,27 @@ export type Device = {
 
 export type DeviceMutator = {
   deviceStatus: DeviceStatus,
-  deviceType: DeviceType,
-  id?: EntityID,
-  locationId: ?EntityID,
+  id?: string,
+  isMultiTap: boolean,
+  location: ?Location,
   name: string,
   particleId: string,
-};
-
-export type FlowSensorType =
-  | 'Custom'
-  | 'FT330'
-  | 'Sea'
-  | 'SwissFlowSF800'
-  | 'Titan';
-
-export type FlowSensor = {
-  flowSensorType: FlowSensorType,
-  id: EntityID,
-  isDeleted: boolean,
-  pulsesPerGallon: number,
-  tap: ShortenedEntity,
-};
-
-export type FlowSensorMutator = {
-  flowSensorType: FlowSensorType,
-  id?: EntityID,
-  pulsesPerGallon: number,
-  tapId: EntityID,
-};
-
-export type FriendStatus = 'Approved' | 'Blocked' | 'Pending' | 'Spam';
-
-export type Friend = {
-  createdDate: Date,
-  friendAccount: {
-    id: EntityID,
-    phoneNumber: string,
-    userName: string,
-  },
-  friendStatus: FriendStatus,
-  id: EntityID,
 };
 
 export type Glass = {
   createDate: Date,
   description: ?string,
-  id: EntityID,
+  id: string,
   name: string,
   updateDate: Date,
 };
 
-export type KegType =
-  | 'Cornelius'
-  | 'HalfBarrel'
-  | 'Mini'
-  | 'QuarterBarrel'
-  | 'SixthBarrel'
-  | 'SlimQuarter';
-
 export type Keg = {
   beverage: ShortenedEntity,
   floatedDate: Date,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
-  kegType: KegType,
+  kegType: string,
   location: ?ShortenedEntity,
   maxOunces: number,
   organization: ShortenedEntity,
@@ -278,13 +175,6 @@ export type Keg = {
   pulses: number,
   tap: ?ShortenedEntity,
   tapDate: Date,
-};
-
-export type KegMutator = {
-  beverageId: EntityID,
-  id?: EntityID,
-  startingPercentage?: number,
-  tapId: EntityID,
 };
 
 export type Location = {
@@ -299,7 +189,7 @@ export type Location = {
       wellKnownBinary: ?Object,
     },
   },
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   locationType: string,
   name: string,
@@ -312,33 +202,9 @@ export type Location = {
   zipCode: number,
 };
 
-export type LeaderboardItem = {
-  lastPourDate: Date,
-  totalOunces: number,
-  totalPours: number,
-  userID: EntityID,
-  userName: string,
-};
-
-export type LocationMutator = {
-  city: string,
-  description: ?string,
-  id: ?EntityID,
-  isDeleted: boolean,
-  locationType: string,
-  name: string,
-  organizationId: ?EntityID,
-  state: ?string,
-  street: string,
-  suite: string,
-  summary: string,
-  timeZone: string,
-  zipCode: number,
-};
-
 export type Organization = {
   createdDate: Date,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   name: string,
 };
@@ -357,17 +223,17 @@ export type PermissionType =
 
 export type Permission = {
   createdBy: {
-    id: EntityID,
+    id: string,
     userName: string,
   },
   createdDate: Date,
   device: ?ShortenedEntity,
   expiresDate: ?Date,
   forUser: {
-    id: EntityID,
+    id: string,
     userName: string,
   },
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   invalid: boolean,
   location: ?ShortenedEntity,
@@ -378,23 +244,23 @@ export type Permission = {
 };
 
 export type PermissionMutator<TEntity> = {
-  entityId: EntityID,
+  entity: TEntity,
   entityType: PermissionEntityType,
   expiresDate: ?Date,
-  id: ?EntityID,
+  id: ?string,
   permissionType: PermissionType,
   startDate: ?Date,
-  userId: EntityID,
+  user: { id: string, userName: string },
 };
 
 export type Pour = {
   beverage: ?ShortenedEntity,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   location: ?ShortenedEntity,
   organization: ShortenedEntity,
   ounces: number,
-  owner: { id: EntityID, userName: string },
+  owner: { id: string, userName: string },
   pourDate: string,
   pulses: number,
   tap: ?ShortenedEntity,
@@ -403,7 +269,7 @@ export type Pour = {
 export type Report = {
   createdDate: Date,
   devices: Array<ShortenedEntity>,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   lastEdited: Date,
   locations: Array<ShortenedEntity>,
@@ -416,7 +282,7 @@ export type Report = {
 
 export type ReportMutator = {
   devices?: Array<ShortenedEntity>,
-  id?: EntityID,
+  id?: string,
   locations?: Array<ShortenedEntity>,
   name: string,
   reportCadence: ReportCadence,
@@ -434,14 +300,14 @@ export type ReportCadence =
 
 export type Schedule = {
   accounts: Array<{
-    id: EntityID,
+    id: string,
     userName: string,
   }>,
   createdDate: Date,
   days: number,
   editDate: Date,
   endTime: Date,
-  id: EntityID,
+  id: string,
   isDeleted: boolean,
   location: ?ShortenedEntity,
   name: string,
@@ -450,12 +316,12 @@ export type Schedule = {
 
 export type ScheduleMutator = {
   accounts: Array<{
-    id: EntityID,
+    id: string,
     userName: string,
   }>,
   days: number,
   endTime: Date,
-  id: ?EntityID,
+  id: ?string,
   locationId: ?string,
   name: string,
   startTime: Date,
@@ -463,7 +329,7 @@ export type ScheduleMutator = {
 
 export type Srm = {
   hex: string,
-  id: EntityID,
+  id: string,
   name: string,
 };
 
@@ -476,7 +342,7 @@ export type Style = {
   fgMin: number,
   ibuMax: number,
   ibuMin: number,
-  id: EntityID,
+  id: string,
   name: string,
   ogMax: number,
   ogMin: number,
@@ -492,7 +358,7 @@ export type Tap = {
   disableBadges: boolean,
   hideLeaderboard: boolean,
   hideStats: boolean,
-  id: EntityID,
+  id: string,
   location: ?ShortenedEntity,
   name: string,
   organization: ShortenedEntity,
@@ -500,63 +366,18 @@ export type Tap = {
 };
 
 export type TapMutator = {
+  createdDate: ?string,
   description: ?string,
-  deviceId: ?EntityID,
+  device: Device,
   disableBadges: boolean,
   hideLeaderboard: boolean,
   hideStats: boolean,
-  id: ?EntityID,
-  locationId: ?EntityID,
+  id: ?string,
   name: string,
   requiresPourPrivilege: boolean,
 };
 
 /* DAO */
-declare export class LoadObject<VType> {
-  static creating<Vtype>(): LoadObject<Vtype>;
-  static deleting<Vtype>(): LoadObject<Vtype>;
-  static empty<Vtype>(): LoadObject<Vtype>;
-  static loading<Vtype>(): LoadObject<Vtype>;
-  static updating<Vtype>(): LoadObject<Vtype>;
-  static withError<Vtype>(error: Error): LoadObject<Vtype>;
-  static withValue<Vtype>(value: Vtype): LoadObject<Vtype>;
-  creating(): LoadObject<VType>;
-  deleting(): LoadObject<VType>;
-  done(): LoadObject<VType>;
-  getError(): ?Error;
-  getErrorEnforcing(): Error;
-  getOperation(): LoadObjectOperation;
-  getValue(): ?VType;
-  getValueEnforcing(): VType;
-  hasError(): boolean;
-  hasOperation(): boolean;
-  hasValue(): boolean;
-  isCreating(): boolean;
-  isDeleting(): boolean;
-  isDone(): boolean;
-  isEmpty(): boolean;
-  isLoading(): boolean;
-  isUpdating(): boolean;
-  loading(): LoadObject<VType>;
-  map<TType>(
-    fn: (value: VType) => TType | LoadObject<TType>,
-  ): LoadObject<TType>;
-  mapError<TType>(
-    fn: (value: Error) => Error | LoadObject<TType>,
-  ): LoadObject<TType>;
-  removeError(): LoadObject<VType>;
-  removeOperation(): LoadObject<VType>;
-  removeValue(): LoadObject<VType>;
-  setError(error: Error): LoadObject<VType>;
-  setOperation(operation: LoadObjectOperation): LoadObject<VType>;
-  setValue(value: VType): LoadObject<VType>;
-  updating(): LoadObject<VType>;
-}
-
-export type DAOResult = {
-  data: any,
-  inlinecount?: number,
-};
 
 export type FilterOperator =
   | 'contains'
@@ -583,24 +404,32 @@ export type QueryOrderBy = {
 };
 
 export type QueryOptions = {
-  apply?: string,
+  count?: boolean,
   filters?: Array<QueryFilter>,
   orderBy?: Array<QueryOrderBy>,
-  shouldCount?: boolean,
   skip?: number,
   take?: number,
 };
 
-export type SelectExpandQuery<TEntity> = {|
-  expand?: { [key: $Keys<TEntity>]: Array<string> },
-  select?: Array<$Keys<TEntity>>,
-|};
-
-export type DAOConfig<TEntity, TEntityMutator> = {|
+export type DAOConfig<TEntity, TEntityMutator> = {
   entityName: EntityName,
-  selectExpandQuery?: SelectExpandQuery<TEntity>,
+  navigationProperties?: { [string]: ?Array<string> },
   translator: DAOTranslator<TEntity, TEntityMutator>,
-|};
+};
+
+declare export class DAOResult<TEntity> {
+  _count: ?number;
+  _data: ?TEntity | ?Array<TEntity>;
+  _error: ?Error;
+  constructor(
+    data: ?TEntity | ?Array<TEntity>,
+    count: ?number,
+    error?: Error,
+  ): void;
+  count(): ?number;
+  getData(): ?TEntity | ?Array<TEntity>;
+  getError(): ?Error;
+}
 
 export type DAOTranslator<TEntity, TEntityMutator> = {
   +fromApi: (apiValue: Object) => TEntity,
@@ -608,60 +437,31 @@ export type DAOTranslator<TEntity, TEntityMutator> = {
   +toForm: (model: TEntity) => TEntityMutator,
 };
 
-declare export class BaseDAO<TEntity, TEntityMutator> {
+declare export class DAO<TEntity, TEntityMutator> {
+  count(queryOptions?: QueryOptions): Promise<DAOResult<TEntity>>;
+  deleteByID(id: string): Promise<DAOResult<TEntity>>;
+  fetchByID(id: string): Promise<DAOResult<TEntity>>;
+  fetchByIDs(ids: Array<string>, meta?: Object): Promise<DAOResult<TEntity>>;
+  fetchMany(queryOptions?: QueryOptions): Promise<DAOResult<TEntity>>;
   getEntityName(): EntityName;
   getTranslator(): DAOTranslator<TEntity, TEntityMutator>;
-}
-
-declare export class DAO<
-  TEntity: { id: EntityID },
-  TEntityMutator,
-> extends BaseDAO<TEntity, TEntityMutator> {
-  count(queryOptions?: QueryOptions): LoadObject<number>;
-  deleteByID(id: EntityID): void;
-  fetchByID(id: EntityID): LoadObject<TEntity>;
-  fetchByIDs(
-    ids: Array<string>,
-    meta?: Object,
-  ): Map<string, LoadObject<TEntity>>;
-  fetchMany(
-    queryOptions?: QueryOptions,
-  ): LoadObject<Array<LoadObject<TEntity>>>;
-  flushCache(): void;
-  flushQueryCaches(): void;
-  patch(id: EntityID, params: TEntityMutator): void;
-  post(params: TEntityMutator): EntityID;
-  put(id: EntityID, params: TEntityMutator): void;
-  subscribe(handler: () => void): void;
-  unsubscribe(handler: () => void): void;
-  waitForLoaded<TResponse>(
-    fn: () => LoadObject<TResponse>,
-    timeout?: number,
-  ): Promise<TResponse>;
+  patch(id: string, params: TEntityMutator): Promise<DAOResult<TEntity>>;
+  post(params: TEntityMutator): Promise<DAOResult<TEntity>>;
+  put(id: string, params: TEntityMutator): Promise<DAOResult<TEntity>>;
 }
 
 declare class brewskey$AccountDAO extends DAO<Account, AccountMutator> {}
-declare class brewskey$AchievementDAO extends DAO<Achievement, Achievement> {
-  fetchAchievementCounters(
-    userID: EntityID,
-  ): LoadObject<Array<AchievementCounter>>;
-}
 declare class brewskey$AvailabilityDAO extends DAO<
   Availability,
   Availability,
 > {}
-declare class brewskey$BeverageDAO extends DAO<Beverage, BeverageMutator> {}
+declare class brewskey$BeverageDAO extends DAO<Beverage, Beverage> {}
 declare class brewskey$DeviceDAO extends DAO<Device, DeviceMutator> {}
 declare class brewskey$GlassDAO extends DAO<Glass, Glass> {}
-declare class brewskey$FlowSensorDAO extends DAO<
-  FlowSensor,
-  FlowSensorMutator,
-> {}
-declare class brewskey$FriendDAO extends DAO<Friend, Friend> {}
-declare class brewskey$KegDAO extends DAO<Keg, KegMutator> {
-  fetchKegByTapID(tapId: string): LoadObject<Array<LoadObject<Keg>>>;
+declare class brewskey$KegDAO extends DAO<Keg, Keg> {
+  fetchKegByTapID(tapId: string): Promise<DAOResult<Keg>>;
 }
-declare class brewskey$LocationDAO extends DAO<Location, LocationMutator> {}
+declare class brewskey$LocationDAO extends DAO<Location, Location> {}
 declare class brewskey$OrganizationDAO extends DAO<
   Organization,
   Organization,
@@ -671,27 +471,17 @@ declare class brewskey$PermissionDAO extends DAO<
   PermissionMutator<*>,
 > {}
 declare class brewskey$PourDAO extends DAO<Pour, Pour> {}
-declare class brewskey$PourChartDAO extends BaseDAO<
+declare class brewkey$PourChartDAO extends DAO<
   PourChartDataSet,
   PourChartDataSet,
 > {
-  fetchChartData(params: PourChartParams): Promise<PourChartDataSet>;
+  fetchChartData(params: PourChartParams): Promise<DAOResult<PourChartDataSet>>;
 }
 declare class brewskey$ReportDAO extends DAO<Report, ReportMutator> {}
 declare class brewskey$ScheduleDAO extends DAO<Schedule, ScheduleMutator> {}
 declare class brewskey$SrmDAO extends DAO<Srm, Srm> {}
 declare class brewskey$StyleDAO extends DAO<Style, Style> {}
-declare class brewskey$TapDAO extends DAO<Tap, TapMutator> {
-  countLeaderboard(
-    tapID: EntityID,
-    duration: string,
-    queryOptions?: QueryOptions,
-  ): LoadObject<number>;
-  fetchLeaderboard(
-    tapID: EntityID,
-    queryOptions?: QueryOptions,
-  ): LoadObject<Array<LeaderboardItem>>;
-}
+declare class brewskey$TapDAO extends DAO<Tap, TapMutator> {}
 
 /* Utilities */
 export type Header = {
@@ -715,18 +505,15 @@ export type OConfig = {
 
 type DAOApi = {
   AccountDAO: brewskey$AccountDAO,
-  AchievementDAO: brewskey$AchievementDAO,
   AvailabilityDAO: brewskey$AvailabilityDAO,
   BeverageDAO: brewskey$BeverageDAO,
   DeviceDAO: brewskey$DeviceDAO,
-  FlowSensorDAO: brewskey$FlowSensorDAO,
-  FriendDAO: brewskey$FriendDAO,
   GlassDAO: brewskey$GlassDAO,
   KegDAO: brewskey$KegDAO,
   LocationDAO: brewskey$LocationDAO,
   OrganizationDAO: brewskey$OrganizationDAO,
   PermissionDAO: brewskey$PermissionDAO,
-  PourChartDAO: brewskey$PourChartDAO,
+  PourChartDAO: brewkey$PourChartDAO,
   PourDAO: brewskey$PourDAO,
   ReportDAO: brewskey$ReportDAO,
   ScheduleDAO: brewskey$ScheduleDAO,
@@ -742,15 +529,11 @@ type DAOApi = {
   getHeaders(): Headers,
   initializeDAOApi(config: OConfig): void,
   setHeaders(headers: Headers): void,
-  setOrganizationID(organizationID: ?EntityID): void,
+  setOrganizationID(organizationID: ?string): void,
 };
 
 declare export var CADENCE_MAP: { [ReportCadence]: number };
 declare export var DAO_ENTITIES: { [string]: EntityName };
-declare export var FRIEND_STATUSES: { [string]: FriendStatus };
-declare export var MAX_OUNCES_BY_KEG_TYPE: { [KegType]: number };
 declare export var PERMISSIONS_MAP: { [PermissionType]: number };
-declare export var LoadObject;
-// declare export var LoadObject: ILoadObject;
 
 declare export default DAOApi
